@@ -84,6 +84,12 @@ public class InheritanceImpl implements Inheritance {
         this.classes.computeIfAbsent(name, k -> Optional.of(new ClassInfo(value)));
     }
 
+    // Not public API!
+    @SuppressWarnings("unchecked")
+    Map<String, Optional<IClassInfo>> getClasses() {
+        return (Map<String, Optional<IClassInfo>>) (Map) this.classes;
+    }
+
     private Optional<ClassInfo> computeClassInfo(String name) {
         File source = sources.get(name);
         if (source != null) {

@@ -116,6 +116,11 @@ class RenamerImpl implements Renamer {
                 inh.addClass(c.getName().substring(0, c.getName().length() - 6), c.getData())
             );
 
+            for (Transformer transformer : this.transformers) {
+                if (transformer instanceof InnerClassesAttributeFixer)
+                    ((InnerClassesAttributeFixer) transformer).setupClasses();
+            }
+
             // Process everything
             logger.accept("Processing entries");
             List<Entry> newEntries = async.invokeAll(oldEntries, Entry::getName, this::processEntry);

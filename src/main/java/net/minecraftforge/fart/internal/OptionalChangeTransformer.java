@@ -27,17 +27,21 @@ import org.objectweb.asm.ClassWriter;
 import java.util.function.Function;
 
 abstract class OptionalChangeTransformer implements Transformer {
-    protected final Function<ClassVisitor, ClassFixer> fixerFactory;
+    private final Function<ClassVisitor, ClassFixer> fixerFactory;
 
     protected OptionalChangeTransformer(Function<ClassVisitor, ClassFixer> fixerFactory) {
         this.fixerFactory = fixerFactory;
+    }
+
+    protected Function<ClassVisitor, ClassFixer> getFixerFactory() {
+        return this.fixerFactory;
     }
 
     @Override
     public ClassEntry process(ClassEntry entry) {
         ClassReader reader = new ClassReader(entry.getData());
         ClassWriter writer = new ClassWriter(reader, 0);
-        ClassFixer fixer = fixerFactory.apply(writer);
+        ClassFixer fixer = this.getFixerFactory().apply(writer);
 
         reader.accept(fixer, 0);
 

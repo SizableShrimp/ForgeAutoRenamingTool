@@ -51,6 +51,7 @@ public class Main {
         OptionSpec<File> libO    = parser.acceptsAll(Arrays.asList("lib", "e"), "Additional library to use for inheritence").withRequiredArg().ofType(File.class);
         OptionSpec<Void> fixAnnO = parser.accepts("ann-fix", "Fixes misaligned parameter annotations caused by Proguard.");
         OptionSpec<Void> fixRecordsO = parser.accepts("record-fix", "Fixes record component data stripped by Proguard.");
+        OptionSpec<Void> fixInnerClassesAttributeO = parser.accepts("inner-classes-attr-fix", "Fixes InnerClasses class attribute stripped by Proguard.");
         OptionSpec<IdentifierFixerConfig> fixIdsO = parser.accepts("ids-fix", "Fixes local variables that are not valid java identifiers.").withOptionalArg().withValuesConvertedBy(new EnumConverter<>(IdentifierFixerConfig.class)).defaultsTo(IdentifierFixerConfig.ALL);
         OptionSpec<SourceFixerConfig> fixSrcO = parser.accepts("src-fix", "Fixes the 'SourceFile' attribute of classes.").withOptionalArg().withValuesConvertedBy(new EnumConverter<>(SourceFixerConfig.class)).defaultsTo(SourceFixerConfig.JAVA);
         OptionSpec<SignatureStripperConfig> stripSigsO = parser.accepts("strip-sigs", "Strip invalid codesigning signatures from the Jar manifest").withOptionalArg().withValuesConvertedBy(new EnumConverter<>(SignatureStripperConfig.class)).defaultsTo(SignatureStripperConfig.ALL);
@@ -167,6 +168,13 @@ public class Main {
             builder.add(Transformer.signatureStripperFactory(config));
         } else {
             log.accept("Strip codesigning signatures: false");
+        }
+
+        if (options.has(fixInnerClassesAttributeO)) {
+            log.accept("Fix InnerClasses Attribute: true");
+            builder.add(Transformer.innerClassesAttributeFixerFactory());
+        } else {
+            log.accept("Fix InnerClasses Attribute: false");
         }
 
         Renamer renamer = builder.build();

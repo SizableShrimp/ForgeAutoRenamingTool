@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 
 import net.minecraftforge.fart.internal.FFLineFixer;
 import net.minecraftforge.fart.internal.IdentifierFixer;
+import net.minecraftforge.fart.internal.InnerClassesAttributeFixer;
 import net.minecraftforge.fart.internal.ParameterAnnotationFixer;
 import net.minecraftforge.fart.internal.EntryImpl;
 import net.minecraftforge.fart.internal.RecordFixer;
@@ -109,6 +110,15 @@ public interface Transformer {
      */
     public static Factory recordFixerFactory() {
         return ctx -> RecordFixer.INSTANCE;
+    }
+
+    /**
+     * Create a transformer that restores the InnerClasses class attribute stripped by ProGuard.
+     *
+     * @return a factory for a transformer that restores the InnerClasses class attribute
+     */
+    public static Factory innerClassesAttributeFixerFactory() {
+        return ctx -> new InnerClassesAttributeFixer(ctx.getInheritance());
     }
 
     /**
